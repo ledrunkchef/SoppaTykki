@@ -4,29 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lisää resepti — CookBook á la Maks</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500&family=Karla:wght@400;500;600;700&display=swap">
 <style>
+  /* Värimalli: Ilta. Kirjasin: Times New Roman — ei ulkoisia latauksia. */
   :root {
-    --ground:#EDF0EE; --surface:#FFFFFF; --ink:#161D1A; --ink-soft:#5A6862;
-    --ink-faint:#8B9892; --line:#D5DDD9; --line-soft:#E4EAE7;
-    --accent:#245544; --accent-soft:#E2ECE7; --error:#8C3323;
-    --display:"Newsreader",Georgia,serif;
-    --ui:"Karla",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-    --radius:4px;
+    --ground:#EEEDEA; --surface:#FFFFFF; --ink:#201E1A; --ink-soft:#5D5850;
+    --ink-faint:#8D877D; --line:#D8D5CE; --line-soft:#E7E4DE;
+    --accent:#8A5507; --accent-fill:#8A5507; --on-accent:#FFFDF8;
+    --accent-soft:#F6EBD9; --error:#9C3418;
+    --display:"Times New Roman",Times,Georgia,serif;
+    --ui:"Times New Roman",Times,Georgia,serif;
+    --radius:3px;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --ground:#0F1513; --surface:#171E1B; --ink:#E7ECE9; --ink-soft:#A2B0AA;
-      --ink-faint:#71807A; --line:#2A3430; --line-soft:#212B27;
-      --accent:#79C4A2; --accent-soft:#1B2B24; --error:#E08A76;
+      --ground:#14130F; --surface:#1C1A16; --ink:#EFEBE2; --ink-soft:#ABA396;
+      --ink-faint:#79736A; --line:#2E2B24; --line-soft:#221F1A;
+      --accent:#E3A34B; --accent-fill:#E3A34B; --on-accent:#14130F;
+      --accent-soft:#2A2116; --error:#E5836A;
     }
   }
   * { box-sizing:border-box; }
   body {
     margin:0; background:var(--ground); color:var(--ink);
-    font-family:var(--ui); font-size:15px; line-height:1.55;
+    font-family:var(--ui); font-size:16px; line-height:1.55;
     -webkit-font-smoothing:antialiased;
   }
   .wrap { max-width:720px; margin:0 auto; padding:0 20px 80px; }
@@ -80,7 +80,7 @@
     border-radius:var(--radius); padding:12px 22px; border:1px solid var(--line);
     background:var(--surface); color:var(--ink);
   }
-  button.ensisijainen { background:var(--accent); border-color:var(--accent); color:var(--ground); }
+  button.ensisijainen { background:var(--accent-fill); border-color:var(--accent-fill); color:var(--on-accent); }
   button.ensisijainen:hover { filter:brightness(1.1); }
   button:hover { border-color:var(--accent); }
   button:disabled { opacity:0.4; cursor:default; filter:none; }
