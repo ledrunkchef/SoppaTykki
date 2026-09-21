@@ -20,39 +20,46 @@ if ! command -v node >/dev/null 2>&1; then
   lopeta 1
 fi
 
-# 1. Rakenna sivusto paikallista esikatselua varten
+# Tallenna tunnukset avainnippuun, jottei niitä kysytä joka kerta.
+if [ -z "$(git config --get credential.helper)" ]; then
+  git config credential.helper osxkeychain
+fi
+
 if ! node build.js; then
   echo ""
   echo "  Rakennus epäonnistui. Katso virheilmoitus yltä."
   lopeta 1
 fi
 
-# 2. Tallenna ja julkaise
 echo ""
 if [ -z "$(git status --porcelain)" ]; then
   echo "  Ei uusia muutoksia julkaistavaksi."
-else
-  git add -A
-  git commit -q -m "Reseptipäivitys $(date '+%-d.%-m.%Y %H:%M')"
-  echo "  Muutokset tallennettu."
-
-  if git remote | grep -q '^origin$'; then
-    echo "  Lähetetään GitHubiin…"
-    if git push -q 2>/dev/null; then
-      echo ""
-      echo "  Valmis. Sivusto päivittyy noin minuutissa:"
-      echo "  $OSOITE"
-    else
-      echo ""
-      echo "  Lähetys ei onnistunut. Avaa GitHub Desktop ja paina Push origin."
-    fi
-  else
-    echo ""
-    echo "  Repositoriota ei ole vielä julkaistu GitHubissa."
-    echo "  Avaa GitHub Desktop ja paina Publish repository."
-  fi
+  echo "  Sivusto: $OSOITE"
+  lopeta 0
 fi
 
-# 3. Avaa paikallinen esikatselu
-open site/index.html
+git add -A
+git commit -q -m "Reseptipäivitys $(date '+%-d.%-m.%Y %H:%M')"
+echo "  Muutokset tallennettu."
+
+if ! git remote | grep -q '^origin$'; then
+  echo ""
+  echo "  Repositoriota ei ole vielä julkaistu GitHubissa."
+  echo "  Avaa GitHub Desktop ja paina Publish repository."
+  lopeta 1
+fi
+
+echo "  Lähetetään GitHubiin…"
+echo ""
+if git push 2>&1 | sed 's/^/    /'; then
+  echo ""
+  echo "  Valmis. GitHub rakentaa sivuston noin minuutissa:"
+  echo "  $OSOITE"
+  echo ""
+  echo "  Jos sivu näyttää vanhalta, paina selaimessa Cmd+Shift+R."
+else
+  echo ""
+  echo "  Lähetys ei onnistunut. Katso virheilmoitus yltä."
+fi
+
 lopeta 0
