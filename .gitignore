@@ -1,0 +1,11 @@
+# Generoitu sivusto — GitHub rakentaa tämän itse jokaisella pushilla.
+site/
+
+# macOS
+.DS_Store
+.AppleDouble
+._*
+
+# Node
+node_modules/
+npm-debug.log*

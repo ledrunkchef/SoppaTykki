@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lisää resepti — CookBook á la Maks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500&family=Karla:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --ground:#EDF0EE; --surface:#FFFFFF; --ink:#161D1A; --ink-soft:#5A6862;
+    --ink-faint:#8B9892; --line:#D5DDD9; --line-soft:#E4EAE7;
+    --accent:#245544; --accent-soft:#E2ECE7; --error:#8C3323;
+    --display:"Newsreader",Georgia,serif;
+    --ui:"Karla",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    --radius:4px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:#0F1513; --surface:#171E1B; --ink:#E7ECE9; --ink-soft:#A2B0AA;
+      --ink-faint:#71807A; --line:#2A3430; --line-soft:#212B27;
+      --accent:#79C4A2; --accent-soft:#1B2B24; --error:#E08A76;
+    }
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--ui); font-size:15px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap { max-width:720px; margin:0 auto; padding:0 20px 80px; }
+
+  header { padding-block:36px 8px; }
+  h1 {
+    font-family:var(--display); font-size:2.25rem; font-weight:500;
+    letter-spacing:-0.02em; margin:0; line-height:1.1;
+  }
+  h1 em { font-style:italic; color:var(--accent); }
+  .lede { color:var(--ink-soft); margin:10px 0 0; max-width:54ch; }
+
+  /* Kansion valinta */
+  .kansio {
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    margin:26px 0 8px; padding:16px 18px;
+    background:var(--accent-soft); border-radius:var(--radius);
+  }
+  .kansio-teksti { flex:1; min-width:200px; font-size:0.875rem; color:var(--ink-soft); }
+  .kansio-teksti strong { color:var(--ink); display:block; }
+
+  fieldset { border:0; margin:0; padding:0; }
+  .grid { display:grid; gap:20px; margin-top:28px; }
+  .rivi { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  @media (max-width:560px) { .rivi { grid-template-columns:1fr; } }
+
+  label { display:block; }
+  .nimike {
+    font-size:0.8125rem; text-transform:uppercase; letter-spacing:0.07em;
+    font-weight:700; color:var(--ink-faint); margin-bottom:7px;
+  }
+  .vihje { font-weight:400; text-transform:none; letter-spacing:0; color:var(--ink-faint); }
+
+  input[type=text], input[type=number], textarea {
+    width:100%; font:inherit; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:10px 12px;
+  }
+  input:focus, textarea:focus { outline:none; border-color:var(--accent); }
+  textarea { resize:vertical; line-height:1.6; font-size:0.9375rem; }
+  textarea.iso { min-height:170px; }
+  textarea.keski { min-height:120px; }
+  textarea.pieni { min-height:80px; }
+
+  .toiminnot {
+    display:flex; gap:12px; margin-top:32px; flex-wrap:wrap;
+    padding-top:24px; border-top:1px solid var(--line);
+  }
+  button {
+    font:inherit; font-weight:700; cursor:pointer;
+    border-radius:var(--radius); padding:12px 22px; border:1px solid var(--line);
+    background:var(--surface); color:var(--ink);
+  }
+  button.ensisijainen { background:var(--accent); border-color:var(--accent); color:var(--ground); }
+  button.ensisijainen:hover { filter:brightness(1.1); }
+  button:hover { border-color:var(--accent); }
+  button:disabled { opacity:0.4; cursor:default; filter:none; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .ilmo {
+    margin-top:20px; padding:14px 18px; border-radius:var(--radius);
+    background:var(--accent-soft); font-size:0.9375rem;
+  }
+  .ilmo.virhe { background:transparent; border:1px solid var(--error); color:var(--error); }
+  .ilmo code {
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:0.875em; background:var(--surface);
+    padding:1px 5px; border-radius:3px;
+  }
+  .ilmo[hidden] { display:none; }
+
+  .esikatselu {
+    margin-top:28px; padding:18px 20px; background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius);
+  }
+  .esikatselu pre {
+    margin:0; white-space:pre-wrap; word-break:break-word;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:0.8125rem; line-height:1.6; color:var(--ink-soft);
+  }
+  summary { cursor:pointer; font-size:0.8125rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:0.07em; color:var(--ink-faint); }
+  summary:hover { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Lisää <em>resepti</em></h1>
+  <p class="lede">Täytä kentät ja tallenna. Resepti kirjoitetaan suoraan
+     <code>recipes/</code>-kansioon .md-tiedostona.</p>
+</header>
+
+<div class="kansio">
+  <div class="kansio-teksti">
+    <strong id="kansio-tila">Kansiota ei ole valittu</strong>
+    Valitse CookBook-kansio kerran, niin tallennus toimii suoraan.
+  </div>
+  <button type="button" id="valitse-kansio">Valitse kansio</button>
+</div>
+
+<form id="lomake">
+  <div class="grid">
+    <label>
+      <span class="nimike">Otsikko</span>
+      <input type="text" id="otsikko" required placeholder="Esim. Pasta alla carbonara">
+    </label>
+
+    <div class="rivi">
+      <label>
+        <span class="nimike">Annokset</span>
+        <input type="number" id="annokset" value="4" min="1" max="50" required>
+      </label>
+      <label>
+        <span class="nimike">Aika</span>
+        <input type="text" id="aika" placeholder="30 min">
+      </label>
+      <label>
+        <span class="nimike">Tagit</span>
+        <input type="text" id="tagit" placeholder="italialainen, pasta">
+      </label>
+    </div>
+
+    <label>
+      <span class="nimike">Kuvaus <span class="vihje">— valinnainen</span></span>
+      <textarea id="kuvaus" class="pieni" placeholder="Yksi tai kaksi virkettä siitä, mikä tässä on olennaista."></textarea>
+    </label>
+
+    <label>
+      <span class="nimike">Ainekset <span class="vihje">— yksi riviä kohden, määrä ensin</span></span>
+      <textarea id="ainekset" class="iso" required
+        placeholder="400 g spagettia&#10;150 g guancialea&#10;4 keltuaista&#10;50 g pecorinoa raastettuna&#10;1 tl mustapippuria"></textarea>
+    </label>
+
+    <label>
+      <span class="nimike">Valmistus <span class="vihje">— yksi vaihe riviä kohden</span></span>
+      <textarea id="vaiheet" class="iso" required
+        placeholder="Keitä pasta runsaassa suolatussa vedessä.&#10;Paista guanciale rapeaksi miedolla lämmöllä.&#10;Vatkaa keltuaiset ja pecorino kulhossa."></textarea>
+    </label>
+
+    <label>
+      <span class="nimike">Muistiinpanot <span class="vihje">— valinnainen, yksi riviä kohden</span></span>
+      <textarea id="muistiinpanot" class="keski"
+        placeholder="Ensi kerralla vähemmän suolaa.&#10;Toimii myös pancettalla."></textarea>
+    </label>
+  </div>
+
+  <div class="toiminnot">
+    <button type="submit" class="ensisijainen" id="tallenna">Tallenna resepti</button>
+    <button type="button" id="lataa">Lataa tiedostona</button>
+    <button type="button" id="tyhjenna">Tyhjennä</button>
+  </div>
+
+  <div class="ilmo" id="ilmo" hidden></div>
+
+  <details class="esikatselu">
+    <summary>Esikatsele tiedosto</summary>
+    <pre id="esikatselu"></pre>
+  </details>
+</form>
+
+</div>
+
+<script>
+'use strict';
+
+let kansioKahva = null;   // FileSystemDirectoryHandle (CookBook-kansio)
+const tuettu = 'showDirectoryPicker' in window;
+
+const $ = id => document.getElementById(id);
+
+/* ---------- Tiedostonimi ---------- */
+function slugita(teksti) {
+  return teksti
+    .toLowerCase()
+    .replace(/[äå]/g, 'a').replace(/ö/g, 'o')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'resepti';
+}
+
+/* ---------- Markdownin kokoaminen ---------- */
+function rivit(id) {
+  return $(id).value.split('\n').map(s => s.trim()).filter(Boolean);
+}
+
+function kokoaMarkdown() {
+  const otsikko = $('otsikko').value.trim();
+  const annokset = $('annokset').value.trim() || '4';
+  const aika = $('aika').value.trim();
+  const kuvaus = $('kuvaus').value.trim().replace(/\s+/g, ' ');
+  const tagit = $('tagit').value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+
+  let s = '---\n';
+  s += 'otsikko: ' + otsikko + '\n';
+  s += 'annokset: ' + annokset + '\n';
+  if (aika) s += 'aika: ' + aika + '\n';
+  if (tagit.length) s += 'tagit: [' + tagit.join(', ') + ']\n';
+  if (kuvaus) s += 'kuvaus: ' + kuvaus + '\n';
+  s += 'ainekset:\n';
+  for (const a of rivit('ainekset')) s += '  - ' + a + '\n';
+  s += '---\n\n';
+
+  rivit('vaiheet').forEach((v, i) => {
+    s += (i + 1) + '. ' + v.replace(/^\d+[.)]\s*/, '') + '\n';
+  });
+
+  const m = rivit('muistiinpanot');
+  if (m.length) {
+    s += '\n## Muistiinpanot\n\n';
+    for (const x of m) s += '- ' + x.replace(/^[-*]\s*/, '') + '\n';
+  }
+  return s;
+}
+
+/* ---------- Ilmoitukset ---------- */
+function kerro(html, virhe) {
+  const el = $('ilmo');
+  el.innerHTML = html;
+  el.classList.toggle('virhe', !!virhe);
+  el.hidden = false;
+}
+
+/* ---------- Kansion valinta ---------- */
+$('valitse-kansio').addEventListener('click', async () => {
+  if (!tuettu) {
+    kerro('Tämä selain ei tue suoraa tallennusta kansioon. ' +
+          'Käytä <strong>Lataa tiedostona</strong> -painiketta ja siirrä tiedosto ' +
+          '<code>recipes/</code>-kansioon itse. Chrome tukee suoraa tallennusta.', true);
+    return;
+  }
+  try {
+    kansioKahva = await window.showDirectoryPicker({ mode: 'readwrite' });
+    $('kansio-tila').textContent = 'Kansio: ' + kansioKahva.name;
+    kerro('Kansio valittu. Tallennus kirjoittaa suoraan <code>recipes/</code>-kansioon.');
+  } catch (e) {
+    if (e.name !== 'AbortError') kerro('Kansion valinta epäonnistui: ' + e.message, true);
+  }
+});
+
+/* ---------- Tallennus ---------- */
+$('lomake').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const otsikko = $('otsikko').value.trim();
+  if (!otsikko) return;
+
+  const sisalto = kokoaMarkdown();
+  const nimi = slugita(otsikko) + '.md';
+
+  if (!kansioKahva) {
+    kerro('Valitse ensin CookBook-kansio, tai käytä <strong>Lataa tiedostona</strong>.', true);
+    return;
+  }
+
+  try {
+    const reseptit = await kansioKahva.getDirectoryHandle('recipes', { create: true });
+
+    // Varoita jos samanniminen resepti on jo olemassa
+    let olemassa = false;
+    try { await reseptit.getFileHandle(nimi); olemassa = true; } catch (_) {}
+    if (olemassa && !confirm('Tiedosto ' + nimi + ' on jo olemassa. Korvataanko se?')) return;
+
+    const tiedosto = await reseptit.getFileHandle(nimi, { create: true });
+    const kirjoitin = await tiedosto.createWritable();
+    await kirjoitin.write(sisalto);
+    await kirjoitin.close();
+
+    kerro('Tallennettu: <code>recipes/' + nimi + '</code><br>' +
+          'Aja vielä <code>node build.js</code> (tai kaksoisklikkaa <code>paivita.command</code>), ' +
+          'niin sivusto päivittyy.');
+    $('lomake').reset();
+    $('annokset').value = '4';
+    $('esikatselu').textContent = '';
+    $('otsikko').focus();
+  } catch (err) {
+    kerro('Tallennus epäonnistui: ' + err.message, true);
+  }
+});
+
+/* ---------- Lataus varavaihtoehtona ---------- */
+$('lataa').addEventListener('click', () => {
+  const otsikko = $('otsikko').value.trim();
+  if (!otsikko) { kerro('Anna ensin otsikko.', true); return; }
+
+  const blob = new Blob([kokoaMarkdown()], { type: 'text/markdown;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = slugita(otsikko) + '.md';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  kerro('Tiedosto ladattu. Siirrä se <code>CookBook/recipes/</code>-kansioon.');
+});
+
+$('tyhjenna').addEventListener('click', () => {
+  $('lomake').reset();
+  $('annokset').value = '4';
+  $('esikatselu').textContent = '';
+  $('ilmo').hidden = true;
+});
+
+/* ---------- Elävä esikatselu ---------- */
+$('lomake').addEventListener('input', () => {
+  $('esikatselu').textContent = kokoaMarkdown();
+});
+$('esikatselu').textContent = kokoaMarkdown();
+
+if (!tuettu) {
+  $('kansio-tila').textContent = 'Selain ei tue suoraa tallennusta';
+}
+</script>
+</body>
+</html>

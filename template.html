@@ -1,0 +1,955 @@
+<title>CookBook á la Maks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Karla:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground:   #EDF0EE;
+    --surface:  #FFFFFF;
+    --ink:      #161D1A;
+    --ink-soft: #5A6862;
+    --ink-faint:#8B9892;
+    --line:     #D5DDD9;
+    --line-soft:#E4EAE7;
+    --accent:   #245544;
+    --accent-soft: #E2ECE7;
+    --warm:     #9A5B2C;
+
+    --display: "Newsreader", Georgia, "Times New Roman", serif;
+    --ui: "Karla", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+    --step-1: 0.8125rem;
+    --step0:  0.9375rem;
+    --step1:  1.0625rem;
+    --step2:  1.375rem;
+    --step3:  1.875rem;
+    --step4:  2.5rem;
+
+    --radius: 4px;
+    --gutter: 20px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:   #0F1513;
+      --surface:  #171E1B;
+      --ink:      #E7ECE9;
+      --ink-soft: #A2B0AA;
+      --ink-faint:#71807A;
+      --line:     #2A3430;
+      --line-soft:#212B27;
+      --accent:   #79C4A2;
+      --accent-soft: #1B2B24;
+      --warm:     #D9995F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:   #0F1513;
+    --surface:  #171E1B;
+    --ink:      #E7ECE9;
+    --ink-soft: #A2B0AA;
+    --ink-faint:#71807A;
+    --line:     #2A3430;
+    --line-soft:#212B27;
+    --accent:   #79C4A2;
+    --accent-soft: #1B2B24;
+    --warm:     #D9995F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--ui);
+    font-size: var(--step0);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* ---------- Ylätunniste ---------- */
+  .top {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: color-mix(in srgb, var(--ground) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-block: 14px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-family: var(--display);
+    font-size: var(--step2);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .brand em { font-style: italic; color: var(--accent); }
+
+  .search {
+    flex: 1 1 200px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 7px 11px;
+  }
+  .search:focus-within { border-color: var(--accent); }
+  .search svg { flex: none; color: var(--ink-faint); }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--ink);
+    padding: 0;
+  }
+  .search input:focus { outline: none; }
+  .search input::placeholder { color: var(--ink-faint); }
+
+  /* ---------- Tagit ---------- */
+  .tagbar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+  }
+  .tag {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 100px;
+    padding: 3px 11px;
+    font-size: var(--step-1);
+    font-weight: 500;
+    transition: background 120ms, color 120ms, border-color 120ms;
+  }
+  .tag:hover { border-color: var(--accent); color: var(--accent); }
+  .tag[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--surface);
+  }
+  /* ---------- Luettelo ---------- */
+  .count {
+    font-size: var(--step-1);
+    color: var(--ink-faint);
+    padding-block: 18px 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .list { list-style: none; margin: 0 0 60px; padding: 0; }
+  .list li { border-top: 1px solid var(--line-soft); }
+  .list li:last-child { border-bottom: 1px solid var(--line-soft); }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 18px 4px;
+    transition: padding-left 140ms ease, color 140ms;
+  }
+  .row:hover { padding-left: 12px; color: var(--accent); }
+  .row-main { flex: 1; min-width: 0; }
+  .row-title {
+    font-family: var(--display);
+    font-size: var(--step2);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    display: block;
+  }
+  .row-desc {
+    color: var(--ink-soft);
+    font-size: var(--step0);
+    margin-top: 3px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .row-meta {
+    flex: none;
+    font-size: var(--step-1);
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .row-tags {
+    margin-top: 7px;
+    font-size: var(--step-1);
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+
+  .empty {
+    padding: 60px 0 80px;
+    text-align: center;
+    color: var(--ink-faint);
+  }
+  .empty strong {
+    display: block;
+    font-family: var(--display);
+    font-size: var(--step2);
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- Resepti ---------- */
+  .back {
+    background: none;
+    border: 0;
+    padding: 20px 0 0;
+    color: var(--ink-soft);
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .back:hover { color: var(--accent); }
+
+  .r-head { padding-block: 22px 26px; border-bottom: 1px solid var(--line); }
+  .r-title {
+    font-family: var(--display);
+    font-size: var(--step4);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .r-desc {
+    font-family: var(--display);
+    font-size: var(--step1);
+    font-style: italic;
+    color: var(--ink-soft);
+    margin: 12px 0 0;
+    max-width: 58ch;
+  }
+  .r-meta {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    font-size: var(--step-1);
+    color: var(--ink-faint);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .r-body {
+    display: grid;
+    grid-template-columns: minmax(230px, 300px) 1fr;
+    gap: 44px;
+    padding-block: 30px 70px;
+    align-items: start;
+  }
+  @media (max-width: 680px) {
+    .r-body { grid-template-columns: 1fr; gap: 34px; }
+  }
+
+  .panel { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 78px); }
+  @media (max-width: 680px) { .panel { position: static; } }
+
+  .sec-label {
+    font-size: var(--step-1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+  }
+
+  /* Annosmäärän säädin */
+  .servings {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 4px;
+    margin-bottom: 18px;
+    width: fit-content;
+  }
+  .servings button {
+    border: 0;
+    background: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 3px;
+    font-size: var(--step1);
+    line-height: 1;
+    color: var(--ink-soft);
+  }
+  .servings button:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent); }
+  .servings button:disabled { opacity: 0.3; cursor: default; }
+  .servings output {
+    min-width: 84px;
+    text-align: center;
+    font-size: var(--step-1);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ingredients { list-style: none; margin: 0; padding: 0; }
+  .ingredients li { border-bottom: 1px solid var(--line-soft); }
+  .ing {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    padding: 9px 2px;
+    align-items: baseline;
+    line-height: 1.4;
+  }
+  .ing:hover .ing-name { color: var(--accent); }
+  .ing-amt {
+    flex: none;
+    min-width: 58px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    font-size: var(--step-1);
+    letter-spacing: 0.01em;
+  }
+  .ing-name { flex: 1; }
+  .ing[aria-pressed="true"] .ing-amt,
+  .ing[aria-pressed="true"] .ing-name {
+    text-decoration: line-through;
+    color: var(--ink-faint);
+    text-decoration-thickness: 1px;
+  }
+
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    padding-block: 15px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .steps li::before {
+    content: counter(step);
+    flex: none;
+    font-family: var(--display);
+    font-size: var(--step1);
+    color: var(--ink-faint);
+    width: 22px;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+  .steps p { margin: 0; max-width: 62ch; }
+
+  .notes {
+    margin-top: 34px;
+    padding: 20px 22px;
+    background: var(--accent-soft);
+    border-radius: var(--radius);
+  }
+  .notes .sec-label { color: var(--accent); margin-bottom: 10px; }
+  .notes ul { margin: 0; padding-left: 18px; }
+  .notes li { margin-bottom: 7px; color: var(--ink-soft); }
+  .notes li:last-child { margin-bottom: 0; }
+
+  .cook-btn {
+    margin-top: 22px;
+    width: 100%;
+    background: var(--accent);
+    color: var(--ground);
+    border: 0;
+    border-radius: var(--radius);
+    padding: 13px;
+    font-weight: 700;
+    font-size: var(--step0);
+    letter-spacing: 0.03em;
+  }
+  .cook-btn:hover { filter: brightness(1.1); }
+
+  /* ---------- Kokkaustila ---------- */
+  .cook {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--ground);
+    display: flex;
+    flex-direction: column;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .cook-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px var(--gutter);
+    border-bottom: 1px solid var(--line);
+  }
+  .cook-name {
+    font-family: var(--display);
+    font-size: var(--step1);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cook-close {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 5px 12px;
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--ink-soft);
+    flex: none;
+  }
+  .cook-close:hover { border-color: var(--accent); color: var(--accent); }
+
+  .cook-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px var(--gutter);
+    overflow-y: auto;
+  }
+  .cook-num {
+    font-size: var(--step-1);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .cook-text {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 5.2vw, 2.6rem);
+    line-height: 1.32;
+    font-weight: 400;
+    max-width: 22ch;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .cook-ings {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    max-width: 34ch;
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+  }
+  .cook-ings span { color: var(--accent); font-weight: 600; }
+
+  .cook-nav {
+    display: flex;
+    gap: 10px;
+    padding: 14px var(--gutter) 20px;
+    border-top: 1px solid var(--line);
+  }
+  .cook-nav button {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 15px;
+    font-weight: 700;
+    font-size: var(--step0);
+  }
+  .cook-nav button:disabled { opacity: 0.35; cursor: default; }
+  .cook-nav .next {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--ground);
+    flex: 2;
+  }
+  .cook-dots {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    padding-bottom: 10px;
+  }
+  .cook-dots i {
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--line);
+    transition: background 200ms;
+  }
+  .cook-dots i.on { background: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="top-inner">
+      <h1 class="brand">CookBook <em>á la</em> Maks</h1>
+      <label class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path>
+        </svg>
+        <input id="haku" type="search" placeholder="Hae aineksella tai nimellä…" autocomplete="off" aria-label="Hae reseptejä">
+      </label>
+    </div>
+    <div class="tagbar" id="tagbar"></div>
+  </div>
+</header>
+
+<main class="wrap" id="näkymä"></main>
+
+<div id="kokkaus"></div>
+
+<script>
+  const RESEPTIT = /*__RESEPTIT__*/[];
+
+  /* ---------- Määrien muotoilu ---------- */
+  const MURTOLUVUT = [
+    [0.125, '⅛'], [0.25, '¼'], [0.333, '⅓'], [0.375, '⅜'],
+    [0.5, '½'], [0.625, '⅝'], [0.667, '⅔'], [0.75, '¾'], [0.875, '⅞']
+  ];
+
+  function muotoileMaara(n) {
+    if (n == null) return '';
+    if (n < 0.05) return '';
+
+    const kokonainen = Math.floor(n + 1e-9);
+    const jaannos = n - kokonainen;
+
+    // Etsi lähin murtoluku, jos jäännös osuu tarpeeksi lähelle
+    for (const [arvo, merkki] of MURTOLUVUT) {
+      if (Math.abs(jaannos - arvo) < 0.021) {
+        return (kokonainen > 0 ? kokonainen : '') + merkki;
+      }
+    }
+    if (jaannos < 0.021) return String(kokonainen);
+
+    // Muuten desimaali suomalaisittain
+    const pyoristetty = n < 10 ? Math.round(n * 10) / 10 : Math.round(n);
+    return String(pyoristetty).replace('.', ',');
+  }
+
+  function aineksenMaara(a, kerroin) {
+    if (a.maara == null) return '';
+    let s = muotoileMaara(a.maara * kerroin);
+    if (a.maaraMax != null) s += '–' + muotoileMaara(a.maaraMax * kerroin);
+    if (a.yksikko) s += ' ' + a.yksikko;
+    return s;
+  }
+
+  /* ---------- Tila ---------- */
+  let hakusana = '';
+  let valittuTagi = null;
+  let annokset = null;
+  const rastitut = new Set();
+
+  function normalisoi(s) { return (s || '').toLowerCase(); }
+
+  function suodata() {
+    const q = normalisoi(hakusana).trim();
+    return RESEPTIT.filter(r => {
+      if (valittuTagi && !r.tagit.includes(valittuTagi)) return false;
+      if (!q) return true;
+      const heinasuova = normalisoi([
+        r.otsikko,
+        r.kuvaus || '',
+        r.tagit.join(' '),
+        r.ainekset.map(a => a.aines).join(' ')
+      ].join(' '));
+      return q.split(/\s+/).every(sana => heinasuova.includes(sana));
+    });
+  }
+
+  /* ---------- Tagipalkki ---------- */
+  function piirräTagit() {
+    const kaikki = new Map();
+    for (const r of RESEPTIT) {
+      for (const t of r.tagit) kaikki.set(t, (kaikki.get(t) || 0) + 1);
+    }
+    const järjestetty = [...kaikki.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'fi'));
+
+    const bar = document.getElementById('tagbar');
+    bar.innerHTML = '';
+    for (const [t] of järjestetty) {
+      const b = document.createElement('button');
+      b.className = 'tag';
+      b.textContent = t;
+      b.setAttribute('aria-pressed', String(valittuTagi === t));
+      b.onclick = () => {
+        valittuTagi = valittuTagi === t ? null : t;
+        piirräTagit();
+        reititä();
+      };
+      bar.appendChild(b);
+    }
+  }
+
+  /* ---------- Luettelonäkymä ---------- */
+  function piirräLuettelo() {
+    const osumat = suodata();
+    const el = document.getElementById('näkymä');
+
+    if (!RESEPTIT.length) {
+      el.innerHTML = '<div class="empty"><strong>Keittokirja on vielä tyhjä.</strong>' +
+        'Lisää ensimmäinen resepti lisaa-resepti.html-lomakkeella.</div>';
+      return;
+    }
+    if (!osumat.length) {
+      el.innerHTML = '<div class="empty"><strong>Ei osumia.</strong>' +
+        'Kokeile toista hakusanaa tai poista tagirajaus.</div>';
+      return;
+    }
+
+    const lkm = osumat.length === 1 ? '1 resepti' : osumat.length + ' reseptiä';
+    const lista = document.createElement('ul');
+    lista.className = 'list';
+
+    for (const r of osumat) {
+      const li = document.createElement('li');
+      const nappi = document.createElement('button');
+      nappi.className = 'row';
+      nappi.onclick = () => { location.hash = 'resepti/' + r.id; };
+
+      const main = document.createElement('div');
+      main.className = 'row-main';
+
+      const otsikko = document.createElement('span');
+      otsikko.className = 'row-title';
+      otsikko.textContent = r.otsikko;
+      main.appendChild(otsikko);
+
+      if (r.kuvaus) {
+        const d = document.createElement('div');
+        d.className = 'row-desc';
+        d.textContent = r.kuvaus;
+        main.appendChild(d);
+      }
+      if (r.tagit.length) {
+        const t = document.createElement('div');
+        t.className = 'row-tags';
+        t.textContent = r.tagit.join(' · ');
+        main.appendChild(t);
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'row-meta';
+      meta.textContent = r.aika || '';
+
+      nappi.append(main, meta);
+      li.appendChild(nappi);
+      lista.appendChild(li);
+    }
+
+    el.innerHTML = '<div class="count">' + lkm + '</div>';
+    el.appendChild(lista);
+  }
+
+  /* ---------- Reseptinäkymä ---------- */
+  function piirräResepti(r) {
+    const el = document.getElementById('näkymä');
+    el.innerHTML = '';
+    rastitut.clear();
+    if (annokset == null) annokset = r.annokset;
+
+    const takaisin = document.createElement('button');
+    takaisin.className = 'back';
+    takaisin.textContent = '← Kaikki reseptit';
+    takaisin.onclick = () => { location.hash = ''; };
+
+    const head = document.createElement('div');
+    head.className = 'r-head';
+    const h = document.createElement('h2');
+    h.className = 'r-title';
+    h.textContent = r.otsikko;
+    head.appendChild(h);
+
+    if (r.kuvaus) {
+      const d = document.createElement('p');
+      d.className = 'r-desc';
+      d.textContent = r.kuvaus;
+      head.appendChild(d);
+    }
+
+    const meta = document.createElement('div');
+    meta.className = 'r-meta';
+    const palat = [];
+    if (r.aika) palat.push(r.aika);
+    if (r.tagit.length) palat.push(r.tagit.join(' · '));
+    if (r.lahde) palat.push(r.lahde);
+    for (const p of palat) {
+      const s = document.createElement('span');
+      s.textContent = p;
+      meta.appendChild(s);
+    }
+    head.appendChild(meta);
+
+    /* Ainekset */
+    const body = document.createElement('div');
+    body.className = 'r-body';
+
+    const vasen = document.createElement('div');
+    vasen.className = 'panel';
+    const lbl = document.createElement('div');
+    lbl.className = 'sec-label';
+    lbl.textContent = 'Ainekset';
+    vasen.appendChild(lbl);
+
+    const säädin = document.createElement('div');
+    säädin.className = 'servings';
+    const vähennä = document.createElement('button');
+    vähennä.textContent = '−';
+    vähennä.setAttribute('aria-label', 'Vähennä annoksia');
+    const näyttö = document.createElement('output');
+    const lisää = document.createElement('button');
+    lisää.textContent = '+';
+    lisää.setAttribute('aria-label', 'Lisää annoksia');
+    säädin.append(vähennä, näyttö, lisää);
+    vasen.appendChild(säädin);
+
+    const lista = document.createElement('ul');
+    lista.className = 'ingredients';
+    vasen.appendChild(lista);
+
+    function päivitäAinekset() {
+      const kerroin = annokset / r.annokset;
+      näyttö.textContent = annokset + (annokset === 1 ? ' annos' : ' annosta');
+      vähennä.disabled = annokset <= 1;
+      lista.innerHTML = '';
+
+      r.ainekset.forEach((a, i) => {
+        const li = document.createElement('li');
+        const b = document.createElement('button');
+        b.className = 'ing';
+        b.setAttribute('aria-pressed', String(rastitut.has(i)));
+        b.onclick = () => {
+          rastitut.has(i) ? rastitut.delete(i) : rastitut.add(i);
+          b.setAttribute('aria-pressed', String(rastitut.has(i)));
+        };
+
+        const amt = document.createElement('span');
+        amt.className = 'ing-amt';
+        amt.textContent = aineksenMaara(a, kerroin);
+
+        const nimi = document.createElement('span');
+        nimi.className = 'ing-name';
+        nimi.textContent = a.aines;
+
+        b.append(amt, nimi);
+        li.appendChild(b);
+        lista.appendChild(li);
+      });
+    }
+
+    vähennä.onclick = () => { if (annokset > 1) { annokset--; päivitäAinekset(); } };
+    lisää.onclick = () => { if (annokset < 50) { annokset++; päivitäAinekset(); } };
+    päivitäAinekset();
+
+    if (r.vaiheet.length) {
+      const kokkaa = document.createElement('button');
+      kokkaa.className = 'cook-btn';
+      kokkaa.textContent = 'Aloita kokkaus';
+      kokkaa.onclick = () => avaaKokkaustila(r);
+      vasen.appendChild(kokkaa);
+    }
+
+    /* Vaiheet */
+    const oikea = document.createElement('div');
+    const lbl2 = document.createElement('div');
+    lbl2.className = 'sec-label';
+    lbl2.textContent = 'Valmistus';
+    oikea.appendChild(lbl2);
+
+    const vaiheet = document.createElement('ol');
+    vaiheet.className = 'steps';
+    for (const v of r.vaiheet) {
+      const li = document.createElement('li');
+      const p = document.createElement('p');
+      p.textContent = v;
+      li.appendChild(p);
+      vaiheet.appendChild(li);
+    }
+    oikea.appendChild(vaiheet);
+
+    if (r.muistiinpanot.length) {
+      const n = document.createElement('div');
+      n.className = 'notes';
+      const nl = document.createElement('div');
+      nl.className = 'sec-label';
+      nl.textContent = 'Muistiinpanot';
+      const ul = document.createElement('ul');
+      for (const m of r.muistiinpanot) {
+        const li = document.createElement('li');
+        li.textContent = m;
+        ul.appendChild(li);
+      }
+      n.append(nl, ul);
+      oikea.appendChild(n);
+    }
+
+    body.append(vasen, oikea);
+    el.append(takaisin, head, body);
+  }
+
+  /* ---------- Kokkaustila ---------- */
+  let wakeLock = null;
+
+  async function lukitseNäyttö() {
+    try {
+      if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+    } catch (e) { /* ei tuettu — ei haittaa */ }
+  }
+  function vapautaNäyttö() {
+    try { if (wakeLock) { wakeLock.release(); wakeLock = null; } } catch (e) {}
+  }
+
+  function avaaKokkaustila(r) {
+    let vaihe = 0;
+    const juuri = document.getElementById('kokkaus');
+    const kerroin = annokset / r.annokset;
+    lukitseNäyttö();
+
+    juuri.innerHTML =
+      '<div class="cook">' +
+        '<div class="cook-top">' +
+          '<span class="cook-name"></span>' +
+          '<button class="cook-close">Lopeta</button>' +
+        '</div>' +
+        '<div class="cook-stage">' +
+          '<div class="cook-num"></div>' +
+          '<p class="cook-text"></p>' +
+          '<div class="cook-ings"></div>' +
+        '</div>' +
+        '<div class="cook-dots"></div>' +
+        '<div class="cook-nav">' +
+          '<button class="prev">Edellinen</button>' +
+          '<button class="next">Seuraava</button>' +
+        '</div>' +
+      '</div>';
+
+    const q = s => juuri.querySelector(s);
+    q('.cook-name').textContent = r.otsikko;
+
+    const pisteet = q('.cook-dots');
+    r.vaiheet.forEach(() => pisteet.appendChild(document.createElement('i')));
+
+    function näytä() {
+      q('.cook-num').textContent = 'Vaihe ' + (vaihe + 1) + ' / ' + r.vaiheet.length;
+      q('.cook-text').textContent = r.vaiheet[vaihe];
+      q('.prev').disabled = vaihe === 0;
+      q('.next').textContent = vaihe === r.vaiheet.length - 1 ? 'Valmis' : 'Seuraava';
+      [...pisteet.children].forEach((d, i) => d.classList.toggle('on', i <= vaihe));
+
+      // Näytä tässä vaiheessa mainitut ainekset määrineen
+      const teksti = normalisoi(r.vaiheet[vaihe]);
+      const osuvat = r.ainekset.filter(a => {
+        const sana = normalisoi(a.aines).split(/\s+/)[0];
+        return sana.length > 3 && teksti.includes(sana.slice(0, Math.max(4, sana.length - 3)));
+      });
+      const laatikko = q('.cook-ings');
+      laatikko.innerHTML = '';
+      for (const a of osuvat) {
+        const rivi = document.createElement('div');
+        const m = aineksenMaara(a, kerroin);
+        if (m) {
+          const s = document.createElement('span');
+          s.textContent = m + ' ';
+          rivi.appendChild(s);
+        }
+        rivi.appendChild(document.createTextNode(a.aines));
+        laatikko.appendChild(rivi);
+      }
+    }
+
+    function sulje() {
+      juuri.innerHTML = '';
+      vapautaNäyttö();
+      document.removeEventListener('keydown', näppäin);
+    }
+
+    function näppäin(e) {
+      if (e.key === 'Escape') sulje();
+      if (e.key === 'ArrowRight' && vaihe < r.vaiheet.length - 1) { vaihe++; näytä(); }
+      if (e.key === 'ArrowLeft' && vaihe > 0) { vaihe--; näytä(); }
+    }
+
+    q('.cook-close').onclick = sulje;
+    q('.prev').onclick = () => { if (vaihe > 0) { vaihe--; näytä(); } };
+    q('.next').onclick = () => {
+      if (vaihe < r.vaiheet.length - 1) { vaihe++; näytä(); } else sulje();
+    };
+    document.addEventListener('keydown', näppäin);
+    näytä();
+  }
+
+  /* ---------- Reititys ---------- */
+  function reititä() {
+    const h = location.hash.replace(/^#/, '');
+    const m = h.match(/^resepti\/(.+)$/);
+    const top = document.querySelector('.top');
+
+    if (m) {
+      const r = RESEPTIT.find(x => x.id === decodeURIComponent(m[1]));
+      if (r) {
+        top.hidden = true;
+        piirräResepti(r);
+        window.scrollTo(0, 0);
+        return;
+      }
+    }
+    top.hidden = false;
+    annokset = null;
+    piirräLuettelo();
+  }
+
+  document.getElementById('haku').addEventListener('input', e => {
+    hakusana = e.target.value;
+    if (location.hash) location.hash = '';
+    else piirräLuettelo();
+  });
+
+  window.addEventListener('hashchange', reititä);
+  piirräTagit();
+  reititä();
+</script>
