@@ -89,6 +89,7 @@ module.exports = [
   { nimi: 'pekoni', kcal: 400, prot: 14, hh: 0.5, sok: 0, rasva: 38, kuitu: 0 },
   { nimi: 'kinkku', kcal: 130, prot: 19, hh: 1, sok: 1, rasva: 5, kuitu: 0 },
   { nimi: 'makkara', kcal: 290, prot: 12, hh: 5, sok: 2, rasva: 24, kuitu: 0 },
+  { nimi: 'nduja', muut: ['ndujaa'], kcal: 450, prot: 14, hh: 1, sok: 0.5, rasva: 44, kuitu: 0 },
   { nimi: 'lohi', kcal: 200, prot: 20, hh: 0, sok: 0, rasva: 13, kuitu: 0 },
   { nimi: 'kirjolohi', kcal: 170, prot: 20, hh: 0, sok: 0, rasva: 10, kuitu: 0 },
   { nimi: 'silakka', kcal: 190, prot: 17, hh: 0, sok: 0, rasva: 14, kuitu: 0 },
@@ -159,6 +160,8 @@ module.exports = [
   { nimi: 'tumma suklaa', muut: ['suklaa'], kcal: 550, prot: 7, hh: 45, sok: 35, rasva: 35, kuitu: 8 },
 
   /* ---------- Mausteet ja nesteet ---------- */
+  { nimi: 'keitinvesi', muut: ['keitinvettä', 'keitinvedestä'], kcal: 0, prot: 0, hh: 0, sok: 0, rasva: 0, kuitu: 0, mitaton: true },
+  { nimi: 'vesi', muut: ['vettä', 'vedessä', 'veteen'], kcal: 0, prot: 0, hh: 0, sok: 0, rasva: 0, kuitu: 0, mitaton: true },
   { nimi: 'suola', kcal: 0, prot: 0, hh: 0, sok: 0, rasva: 0, kuitu: 0, gDl: 120, mitaton: true },
   { nimi: 'pippuri', kcal: 250, prot: 10, hh: 50, sok: 1, rasva: 3, kuitu: 25, gDl: 45, mitaton: true },
   { nimi: 'kaneli', kcal: 250, prot: 4, hh: 55, sok: 2, rasva: 3, kuitu: 53, gDl: 45, mitaton: true },

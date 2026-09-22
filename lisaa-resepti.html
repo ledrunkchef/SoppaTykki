@@ -250,7 +250,8 @@
 <script>
 'use strict';
 
-let kansioKahva = null;   // FileSystemDirectoryHandle (CookBook-kansio)
+let kansioKahva = null;   // FileSystemDirectoryHandle (valittu kansio)
+let reseptiKahva = null;  // FileSystemDirectoryHandle (kansio, johon .md kirjoitetaan)
 const tuettu = 'showDirectoryPicker' in window;
 
 const $ = id => document.getElementById(id);
@@ -258,7 +259,7 @@ const $ = id => document.getElementById(id);
 /* ---------- Tagiluettelo ----------
    build.js kirjoittaa tähän kaikki käytössä olevat tagit muodossa
    [["nopea",4],["kasvis",2]] — yleisin ensin. Älä muokkaa käsin. */
-let tagitLahtotiedot = /*__TAGIT__*/[["nopea",3],["aamiainen",1],["aasialainen",1],["grilli",1],["illallinen",1],["juusto",1],["kastike",1],["kasvis",1],["kesä",1],["salaatti",1],["sveitsiläinen",1],["talvi",1],["terveellinen",1]]/*__TAGIT_LOPPU__*/;
+let tagitLahtotiedot = /*__TAGIT__*/[["nopea",4],["illallinen",2],["aamiainen",1],["aasialainen",1],["grilli",1],["juusto",1],["kastike",1],["kasvis",1],["kesä",1],["salaatti",1],["sveitsiläinen",1],["talvi",1],["terveellinen",1]]/*__TAGIT_LOPPU__*/;
 
 let tunnetutTagit = tagitLahtotiedot.map(t => Array.isArray(t) ? t : [t, 0]);
 const valitutTagit = [];
@@ -382,9 +383,25 @@ $('tagit-kentta').addEventListener('click', e => {
    build.js:n kirjoittama luettelo voi olla vanhentunut, jos reseptejä on
    lisätty rakentamatta sivustoa. Kun kansio on valittu, luetaan tagit
    suoraan .md-tiedostoista. */
-async function paivitaTagitKansiosta(kahva) {
+async function ratkaiseReseptikansio(kahva, salliLuonti) {
+  // Valittu kansio on jo reseptikansio — ei luoda sen sisään toista
+  if (kahva.name === 'recipes') return kahva;
+
+  // Valitun kansion sisältä löytyy recipes/ — valittiin CookBook-juuri
+  try { return await kahva.getDirectoryHandle('recipes'); } catch (_) {}
+
+  // Kansiossa on .md-tiedostoja — se on reseptikansio toisella nimellä
+  for await (const merkinta of kahva.values()) {
+    if (merkinta.kind === 'file' && merkinta.name.endsWith('.md')) return kahva;
+  }
+
+  // Tyhjä kansio: recipes/ luodaan vasta tallennettaessa
+  return salliLuonti ? await kahva.getDirectoryHandle('recipes', { create: true }) : null;
+}
+
+async function paivitaTagitKansiosta(reseptit) {
   try {
-    const reseptit = await kahva.getDirectoryHandle('recipes');
+    if (!reseptit) return 0;
     const laskurit = new Map();
 
     for await (const merkinta of reseptit.values()) {
@@ -521,10 +538,18 @@ $('valitse-kansio').addEventListener('click', async () => {
   }
   try {
     kansioKahva = await window.showDirectoryPicker({ mode: 'readwrite' });
+    reseptiKahva = await ratkaiseReseptikansio(kansioKahva, false);
     $('kansio-tila').textContent = 'Kansio: ' + kansioKahva.name;
-    const loytyi = await paivitaTagitKansiosta(kansioKahva);
-    kerro('Kansio valittu. Tallennus kirjoittaa suoraan <code>recipes/</code>-kansioon.' +
-          (loytyi ? '<br>Tagit luettu resepteistä: ' + loytyi + ' kpl.' : ''));
+    const loytyi = await paivitaTagitKansiosta(reseptiKahva);
+
+    if (reseptiKahva) {
+      kerro('Kansio valittu. Tallennus kirjoittaa kansioon <code>' + reseptiKahva.name +
+            '/</code>.' + (loytyi ? '<br>Tagit luettu resepteistä: ' + loytyi + ' kpl.' : ''));
+    } else {
+      kerro('Kansiosta <code>' + kansioKahva.name + '</code> ei löytynyt reseptejä eikä ' +
+            '<code>recipes/</code>-kansiota. Tallennus luo sinne <code>recipes/</code>-kansion — ' +
+            'valitse CookBook-kansio tai sen <code>recipes/</code>-kansio, jos tämä ei ollut tarkoitus.');
+    }
   } catch (e) {
     if (e.name !== 'AbortError') kerro('Kansion valinta epäonnistui: ' + e.message, true);
   }
@@ -546,7 +571,8 @@ $('lomake').addEventListener('submit', async e => {
   }
 
   try {
-    const reseptit = await kansioKahva.getDirectoryHandle('recipes', { create: true });
+    if (!reseptiKahva) reseptiKahva = await ratkaiseReseptikansio(kansioKahva, true);
+    const reseptit = reseptiKahva;
 
     // Varoita jos samanniminen resepti on jo olemassa
     let olemassa = false;
@@ -558,11 +584,11 @@ $('lomake').addEventListener('submit', async e => {
     await kirjoitin.write(sisalto);
     await kirjoitin.close();
 
-    kerro('Tallennettu: <code>recipes/' + nimi + '</code><br>' +
+    kerro('Tallennettu: <code>' + reseptit.name + '/' + nimi + '</code><br>' +
           'Aja vielä <code>node build.js</code> (tai kaksoisklikkaa <code>paivita.command</code>), ' +
           'niin sivusto päivittyy.');
     tyhjennaLomake();
-    await paivitaTagitKansiosta(kansioKahva);
+    await paivitaTagitKansiosta(reseptit);
     $('otsikko').focus();
   } catch (err) {
     kerro('Tallennus epäonnistui: ' + err.message, true);
