@@ -1,6 +1,6 @@
 ---
 otsikko: Tuorepuuro
-annokset: 4
+annokset: 3
 aika: 5 min
 odotusaika: 6 h
 tagit: [nopea, aamiainen, terveellinen]
