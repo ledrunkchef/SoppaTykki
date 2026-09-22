@@ -187,7 +187,13 @@ function etsiRuoka(nimi) {
 
   for (const ruoka of RUOAT) {
     for (const avain of [ruoka.nimi].concat(ruoka.muut || [])) {
-      if (teksti.includes(avain) && avain.length > pituus) {
+      // Monisanaisesta hakusanasta jokaisen sanan on löydyttävä erikseen:
+      // "rasvatonta maitoa" taipuu, mutta sisältää yhä sanat "rasvaton" ja "maito"
+      const osuu = avain.indexOf(' ') === -1
+        ? teksti.includes(avain)
+        : avain.split(' ').every(sana => teksti.includes(sana));
+
+      if (osuu && avain.length > pituus) {
         paras = ruoka;
         pituus = avain.length;
       }
