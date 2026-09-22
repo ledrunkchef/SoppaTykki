@@ -71,6 +71,45 @@
   textarea.keski { min-height:120px; }
   textarea.pieni { min-height:80px; }
 
+  .yhteisaika {
+    margin-top:8px; font-size:0.875rem; color:var(--ink-faint); min-height:1.4em;
+  }
+  .yhteisaika strong { color:var(--ink-soft); font-weight:700; }
+
+  /* ---------- Tagit ---------- */
+  .tagit-kentta {
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:10px 12px 12px;
+  }
+  .tagit-kentta:focus-within { border-color:var(--accent); }
+  .tagit-kentta input[type=text] {
+    border:0; padding:4px 0; background:transparent;
+  }
+  .tagit-kentta input[type=text]:focus { outline:none; }
+
+  .valitut { display:flex; flex-wrap:wrap; gap:6px; }
+  .valitut:not(:empty) { margin-bottom:8px; }
+
+  .ehdotukset { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .ehdotukset:empty { display:none; }
+
+  .tag {
+    font:inherit; font-size:0.875rem; font-weight:400; cursor:pointer;
+    border:1px solid var(--line); background:transparent; color:var(--ink-soft);
+    border-radius:100px; padding:3px 11px; line-height:1.5;
+    transition:background 120ms, color 120ms, border-color 120ms;
+  }
+  .tag:hover { border-color:var(--accent); color:var(--accent); }
+  .tag.paalla {
+    background:var(--accent-fill); border-color:var(--accent-fill);
+    color:var(--on-accent);
+  }
+  .tag.paalla:hover { color:var(--on-accent); filter:brightness(1.1); }
+  .tag .poista { opacity:0.65; margin-left:5px; }
+  .tag.uusi { border-style:dashed; color:var(--accent); border-color:var(--accent); }
+  .tag .lkm { opacity:0.45; margin-left:5px; font-size:0.85em; }
+  .tyhja-vihje { font-size:0.875rem; color:var(--ink-faint); margin-top:10px; }
+
   .toiminnot {
     display:flex; gap:12px; margin-top:32px; flex-wrap:wrap;
     padding-top:24px; border-top:1px solid var(--line);
@@ -84,6 +123,7 @@
   button.ensisijainen:hover { filter:brightness(1.1); }
   button:hover { border-color:var(--accent); }
   button:disabled { opacity:0.4; cursor:default; filter:none; }
+  button.tag { font-weight:400; padding:3px 11px; }
   :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 
   .ilmo {
@@ -136,19 +176,35 @@
       <input type="text" id="otsikko" required placeholder="Esim. Pasta alla carbonara">
     </label>
 
-    <div class="rivi">
-      <label>
-        <span class="nimike">Annokset</span>
-        <input type="number" id="annokset" value="4" min="1" max="50" required>
-      </label>
-      <label>
-        <span class="nimike">Aika</span>
-        <input type="text" id="aika" placeholder="30 min">
-      </label>
-      <label>
-        <span class="nimike">Tagit</span>
-        <input type="text" id="tagit" placeholder="italialainen, pasta">
-      </label>
+    <div>
+      <div class="rivi">
+        <label>
+          <span class="nimike">Annokset</span>
+          <input type="number" id="annokset" value="4" min="1" max="50" required>
+        </label>
+        <label>
+          <span class="nimike">Työaika</span>
+          <input type="text" id="tyoaika" placeholder="20 min">
+        </label>
+        <label>
+          <span class="nimike">Odotusaika</span>
+          <input type="text" id="odotusaika" placeholder="1 h 30 min">
+        </label>
+      </div>
+      <div class="yhteisaika" id="yhteisaika"></div>
+    </div>
+
+    <div>
+      <span class="nimike">Tagit <span class="vihje">— klikkaa käytössä olevaa tai kirjoita uusi</span></span>
+      <div class="tagit-kentta" id="tagit-kentta">
+        <div class="valitut" id="valitut"></div>
+        <input type="text" id="tagihaku" autocomplete="off"
+               placeholder="Hae tagia tai kirjoita uusi ja paina Enter">
+        <div class="ehdotukset" id="ehdotukset"></div>
+        <div class="tyhja-vihje" id="tagi-tyhja" hidden>
+          Yhtään tagia ei ole vielä käytössä. Kirjoita uusi ja paina Enter.
+        </div>
+      </div>
     </div>
 
     <label>
@@ -199,6 +255,209 @@ const tuettu = 'showDirectoryPicker' in window;
 
 const $ = id => document.getElementById(id);
 
+/* ---------- Tagiluettelo ----------
+   build.js kirjoittaa tähän kaikki käytössä olevat tagit muodossa
+   [["nopea",4],["kasvis",2]] — yleisin ensin. Älä muokkaa käsin. */
+let tagitLahtotiedot = /*__TAGIT__*/[["nopea",3],["aamiainen",1],["aasialainen",1],["grilli",1],["illallinen",1],["juusto",1],["kastike",1],["kasvis",1],["kesä",1],["salaatti",1],["sveitsiläinen",1],["talvi",1],["terveellinen",1]]/*__TAGIT_LOPPU__*/;
+
+let tunnetutTagit = tagitLahtotiedot.map(t => Array.isArray(t) ? t : [t, 0]);
+const valitutTagit = [];
+
+function siistiTagi(s) {
+  return String(s).toLowerCase()
+    .replace(/[,\[\]]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function lisaaTagi(teksti) {
+  const tagi = siistiTagi(teksti);
+  if (!tagi) return false;
+  if (!valitutTagit.includes(tagi)) valitutTagit.push(tagi);
+  $('tagihaku').value = '';
+  piirraTagit();
+  paivitaEsikatselu();
+  return true;
+}
+
+function poistaTagi(tagi) {
+  const i = valitutTagit.indexOf(tagi);
+  if (i > -1) valitutTagit.splice(i, 1);
+  piirraTagit();
+  paivitaEsikatselu();
+}
+
+function luoTagiNappi(teksti, luokat, lkm) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'tag' + (luokat ? ' ' + luokat : '');
+  b.textContent = teksti;
+  if (lkm) {
+    const s = document.createElement('span');
+    s.className = 'lkm';
+    s.textContent = lkm;
+    b.appendChild(s);
+  }
+  return b;
+}
+
+function piirraTagit() {
+  // Valitut
+  const valitutEl = $('valitut');
+  valitutEl.innerHTML = '';
+  for (const tagi of valitutTagit) {
+    const b = luoTagiNappi(tagi, 'paalla');
+    const x = document.createElement('span');
+    x.className = 'poista';
+    x.textContent = '×';
+    b.appendChild(x);
+    b.title = 'Poista tagi';
+    b.setAttribute('aria-label', 'Poista tagi ' + tagi);
+    b.onclick = () => poistaTagi(tagi);
+    valitutEl.appendChild(b);
+  }
+
+  // Ehdotukset
+  const haku = siistiTagi($('tagihaku').value);
+  const ehdotuksetEl = $('ehdotukset');
+  ehdotuksetEl.innerHTML = '';
+
+  const osumat = tunnetutTagit
+    .filter(([tagi]) => !valitutTagit.includes(tagi))
+    .filter(([tagi]) => !haku || tagi.includes(haku));
+
+  for (const [tagi, lkm] of osumat) {
+    const b = luoTagiNappi(tagi, '', lkm);
+    b.onclick = () => lisaaTagi(tagi);
+    ehdotuksetEl.appendChild(b);
+  }
+
+  // Uusi tagi, jota ei vielä ole
+  const tuntematon = haku &&
+    !tunnetutTagit.some(([tagi]) => tagi === haku) &&
+    !valitutTagit.includes(haku);
+  if (tuntematon) {
+    const b = luoTagiNappi('+ ' + haku, 'uusi');
+    b.title = 'Lisää uusi tagi';
+    b.onclick = () => lisaaTagi(haku);
+    ehdotuksetEl.appendChild(b);
+  }
+
+  $('tagi-tyhja').hidden = !(tunnetutTagit.length === 0 && !haku);
+}
+
+$('tagihaku').addEventListener('input', e => {
+  // Pilkku päättää tagin, kuten aiemminkin
+  if (e.target.value.includes(',')) {
+    const palat = e.target.value.split(',');
+    const viimeinen = palat.pop();
+    for (const p of palat) lisaaTagi(p);
+    e.target.value = viimeinen.trim();
+  }
+  piirraTagit();
+});
+
+$('tagihaku').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const haku = siistiTagi(e.target.value);
+    if (haku) {
+      lisaaTagi(haku);
+      return;
+    }
+    // Tyhjällä hakukentällä Enter ei lähetä lomaketta vahingossa
+    return;
+  }
+  if (e.key === 'Backspace' && !e.target.value && valitutTagit.length) {
+    poistaTagi(valitutTagit[valitutTagit.length - 1]);
+  }
+});
+
+/* Klikkaus kentän tyhjään kohtaan vie kohdistuksen hakuun */
+$('tagit-kentta').addEventListener('click', e => {
+  if (e.target === $('tagit-kentta')) $('tagihaku').focus();
+});
+
+/* ---------- Tagien päivitys kansiosta ----------
+   build.js:n kirjoittama luettelo voi olla vanhentunut, jos reseptejä on
+   lisätty rakentamatta sivustoa. Kun kansio on valittu, luetaan tagit
+   suoraan .md-tiedostoista. */
+async function paivitaTagitKansiosta(kahva) {
+  try {
+    const reseptit = await kahva.getDirectoryHandle('recipes');
+    const laskurit = new Map();
+
+    for await (const merkinta of reseptit.values()) {
+      if (merkinta.kind !== 'file' || !merkinta.name.endsWith('.md')) continue;
+      const teksti = await (await merkinta.getFile()).text();
+      const rivi = teksti.match(/^tagit:\s*\[(.*)\]\s*$/m);
+      if (!rivi) continue;
+      for (const osa of rivi[1].split(',')) {
+        const tagi = siistiTagi(osa.replace(/^["']|["']$/g, ''));
+        if (tagi) laskurit.set(tagi, (laskurit.get(tagi) || 0) + 1);
+      }
+    }
+
+    if (laskurit.size) {
+      tunnetutTagit = [...laskurit.entries()].sort(
+        (a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'fi')
+      );
+      piirraTagit();
+    }
+    return laskurit.size;
+  } catch (e) {
+    return 0;
+  }
+}
+
+/* ---------- Ajan käsittely ---------- */
+function aikaMinuutteina(s) {
+  if (!s) return null;
+  const t = String(s).toLowerCase().replace(',', '.');
+  let min = 0, osui = false;
+
+  const h = t.match(/(\d+(?:\.\d+)?)\s*(h\b|t\b|tunti|tuntia)/);
+  if (h) { min += parseFloat(h[1]) * 60; osui = true; }
+
+  const m = t.match(/(\d+(?:\.\d+)?)\s*(min|minuutti|minuuttia)/);
+  if (m) { min += parseFloat(m[1]); osui = true; }
+
+  if (!osui) {
+    const pelkkaLuku = t.match(/^\s*(\d+(?:\.\d+)?)\s*$/);
+    if (pelkkaLuku) { min = parseFloat(pelkkaLuku[1]); osui = true; }
+  }
+  return osui ? Math.round(min) : null;
+}
+
+function muotoileMinuutit(min) {
+  if (min == null) return null;
+  if (min < 60) return min + ' min';
+  const h = Math.floor(min / 60), m = min % 60;
+  return m ? h + ' h ' + m + ' min' : h + ' h';
+}
+
+function paivitaYhteisaika() {
+  const tyo = $('tyoaika').value.trim();
+  const odotus = $('odotusaika').value.trim();
+  const el = $('yhteisaika');
+
+  if (!tyo && !odotus) { el.textContent = ''; return; }
+
+  const tyoMin = aikaMinuutteina(tyo);
+  const odotusMin = aikaMinuutteina(odotus);
+
+  if (tyo && odotus && tyoMin != null && odotusMin != null) {
+    el.innerHTML = 'Yhteensä <strong>' + muotoileMinuutit(tyoMin + odotusMin) +
+                   '</strong> — siitä ' + muotoileMinuutit(tyoMin) + ' työtä.';
+  } else if (tyo && odotus) {
+    el.textContent = 'Luettelossa: ' + tyo + ' + ' + odotus;
+  } else if (odotus && !tyo) {
+    el.textContent = 'Pelkkä odotusaika — jätä työaika tyhjäksi vain, jos työtä ei käytännössä ole.';
+  } else {
+    el.textContent = '';
+  }
+}
+
 /* ---------- Tiedostonimi ---------- */
 function slugita(teksti) {
   return teksti
@@ -217,15 +476,16 @@ function rivit(id) {
 function kokoaMarkdown() {
   const otsikko = $('otsikko').value.trim();
   const annokset = $('annokset').value.trim() || '4';
-  const aika = $('aika').value.trim();
+  const tyoaika = $('tyoaika').value.trim();
+  const odotusaika = $('odotusaika').value.trim();
   const kuvaus = $('kuvaus').value.trim().replace(/\s+/g, ' ');
-  const tagit = $('tagit').value.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
 
   let s = '---\n';
   s += 'otsikko: ' + otsikko + '\n';
   s += 'annokset: ' + annokset + '\n';
-  if (aika) s += 'aika: ' + aika + '\n';
-  if (tagit.length) s += 'tagit: [' + tagit.join(', ') + ']\n';
+  if (tyoaika) s += 'aika: ' + tyoaika + '\n';
+  if (odotusaika) s += 'odotusaika: ' + odotusaika + '\n';
+  if (valitutTagit.length) s += 'tagit: [' + valitutTagit.join(', ') + ']\n';
   if (kuvaus) s += 'kuvaus: ' + kuvaus + '\n';
   s += 'ainekset:\n';
   for (const a of rivit('ainekset')) s += '  - ' + a + '\n';
@@ -262,7 +522,9 @@ $('valitse-kansio').addEventListener('click', async () => {
   try {
     kansioKahva = await window.showDirectoryPicker({ mode: 'readwrite' });
     $('kansio-tila').textContent = 'Kansio: ' + kansioKahva.name;
-    kerro('Kansio valittu. Tallennus kirjoittaa suoraan <code>recipes/</code>-kansioon.');
+    const loytyi = await paivitaTagitKansiosta(kansioKahva);
+    kerro('Kansio valittu. Tallennus kirjoittaa suoraan <code>recipes/</code>-kansioon.' +
+          (loytyi ? '<br>Tagit luettu resepteistä: ' + loytyi + ' kpl.' : ''));
   } catch (e) {
     if (e.name !== 'AbortError') kerro('Kansion valinta epäonnistui: ' + e.message, true);
   }
@@ -299,9 +561,8 @@ $('lomake').addEventListener('submit', async e => {
     kerro('Tallennettu: <code>recipes/' + nimi + '</code><br>' +
           'Aja vielä <code>node build.js</code> (tai kaksoisklikkaa <code>paivita.command</code>), ' +
           'niin sivusto päivittyy.');
-    $('lomake').reset();
-    $('annokset').value = '4';
-    $('esikatselu').textContent = '';
+    tyhjennaLomake();
+    await paivitaTagitKansiosta(kansioKahva);
     $('otsikko').focus();
   } catch (err) {
     kerro('Tallennus epäonnistui: ' + err.message, true);
@@ -322,18 +583,33 @@ $('lataa').addEventListener('click', () => {
   kerro('Tiedosto ladattu. Siirrä se <code>CookBook/recipes/</code>-kansioon.');
 });
 
-$('tyhjenna').addEventListener('click', () => {
+function tyhjennaLomake() {
   $('lomake').reset();
   $('annokset').value = '4';
-  $('esikatselu').textContent = '';
+  valitutTagit.length = 0;
+  piirraTagit();
+  paivitaYhteisaika();
+  $('esikatselu').textContent = kokoaMarkdown();
+}
+
+$('tyhjenna').addEventListener('click', () => {
+  tyhjennaLomake();
   $('ilmo').hidden = true;
 });
 
 /* ---------- Elävä esikatselu ---------- */
-$('lomake').addEventListener('input', () => {
+function paivitaEsikatselu() {
   $('esikatselu').textContent = kokoaMarkdown();
+}
+
+$('lomake').addEventListener('input', () => {
+  paivitaYhteisaika();
+  paivitaEsikatselu();
 });
-$('esikatselu').textContent = kokoaMarkdown();
+
+piirraTagit();
+paivitaYhteisaika();
+paivitaEsikatselu();
 
 if (!tuettu) {
   $('kansio-tila').textContent = 'Selain ei tue suoraa tallennusta';

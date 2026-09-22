@@ -394,6 +394,52 @@
   .notes li { margin-bottom: 7px; color: var(--ink-soft); }
   .notes li:last-child { margin-bottom: 0; }
 
+  /* ---------- Ravintoarvot ---------- */
+  .nutri {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .nutri-kcal {
+    font-family: var(--display);
+    font-size: var(--step2);
+    color: var(--accent);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .nutri-kcal span {
+    font-family: var(--ui);
+    font-size: var(--step-1);
+    color: var(--ink-faint);
+  }
+  .nutri-lista {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+  .nutri-lista dt,
+  .nutri-lista dd {
+    font-size: var(--step-1);
+    padding: 5px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .nutri-lista dt { color: var(--ink-soft); }
+  .nutri-lista dd {
+    margin: 0;
+    text-align: right;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .nutri-lista dt:first-child,
+  .nutri-lista dt:first-child + dd { border-top: 0; }
+  .nutri-lista .alarivi { color: var(--ink-faint); padding-left: 14px; }
+  .nutri-huom {
+    font-size: var(--step-1);
+    color: var(--ink-faint);
+    margin-top: 10px;
+    line-height: 1.45;
+  }
+
   .cook-btn {
     margin-top: 22px;
     width: 100%;
@@ -816,7 +862,13 @@
     const meta = document.createElement('div');
     meta.className = 'r-meta';
     const palat = [];
-    if (r.aika) palat.push(r.aika);
+    if (r.tyoaika && r.odotusaika) {
+      palat.push('Työtä ' + r.tyoaika);
+      palat.push('Odotusta ' + r.odotusaika);
+      if (r.aikaYhteensa) palat.push('Yhteensä ' + r.aikaYhteensa);
+    } else if (r.aika) {
+      palat.push(r.aika);
+    }
     if (r.tagit.length) palat.push(r.tagit.join(' · '));
     if (r.lahde) palat.push(r.lahde);
     for (const p of palat) {
@@ -886,6 +938,57 @@
     vähennä.onclick = () => { if (annokset > 1) { annokset--; päivitäAinekset(); } };
     lisää.onclick = () => { if (annokset < 50) { annokset++; päivitäAinekset(); } };
     päivitäAinekset();
+
+    /* Ravintoarvot: annosta kohden, joten annossäädin ei muuta näitä */
+    if (r.ravinto) {
+      const rav = document.createElement('div');
+      rav.className = 'nutri';
+
+      const ravLbl = document.createElement('div');
+      ravLbl.className = 'sec-label';
+      ravLbl.textContent = 'Ravintoarvot';
+      rav.appendChild(ravLbl);
+
+      const kcal = document.createElement('div');
+      kcal.className = 'nutri-kcal';
+      kcal.textContent = r.ravinto.kcal + ' kcal ';
+      const per = document.createElement('span');
+      per.textContent = 'annosta kohden';
+      kcal.appendChild(per);
+      rav.appendChild(kcal);
+
+      const dl = document.createElement('dl');
+      dl.className = 'nutri-lista';
+      const ravRivit = [
+        ['Proteiini', r.ravinto.proteiini, false],
+        ['Hiilihydraatit', r.ravinto.hiilihydraatit, false],
+        ['josta sokereita', r.ravinto.sokeri, true],
+        ['Rasva', r.ravinto.rasva, false],
+        ['Kuitu', r.ravinto.kuitu, false]
+      ];
+      for (const [ravNimi, arvo, alarivi] of ravRivit) {
+        if (arvo == null) continue;
+        const dt = document.createElement('dt');
+        dt.textContent = ravNimi;
+        if (alarivi) dt.className = 'alarivi';
+        const dd = document.createElement('dd');
+        dd.textContent = arvo + ' g';
+        dl.append(dt, dd);
+      }
+      rav.appendChild(dl);
+
+      const huom = document.createElement('div');
+      huom.className = 'nutri-huom';
+      huom.textContent = r.ravinto.lahde === 'kirjattu'
+        ? 'Reseptiin kirjatut arvot.'
+        : (r.ravinto.katettu < r.ravinto.ainesmaara
+            ? 'Arvio, laskettu aineksista — mukana ' + r.ravinto.katettu +
+              '/' + r.ravinto.ainesmaara + ' ainesta.'
+            : 'Arvio, laskettu aineksista.');
+      rav.appendChild(huom);
+
+      vasen.appendChild(rav);
+    }
 
     if (r.vaiheet.length) {
       const kokkaa = document.createElement('button');

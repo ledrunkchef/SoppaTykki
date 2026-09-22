@@ -38,6 +38,7 @@ noin minuutissa. Osoite pysyy aina samana.
 otsikko: Gyozan dippikastike
 annokset: 4
 aika: 5 min
+odotusaika: 10 min
 tagit: [aasialainen, kastike, nopea]
 kuvaus: Peruskastike gyozalle.
 ainekset:
@@ -64,7 +65,45 @@ Tunnistetut yksiköt: g, kg, mg, ml, cl, dl, l, rkl, tl, kpl, prk, tlk, pss,
 nippu, pala, viipale, kynsi, oksa, annos, purkki, levy. Tuntematon sana menee
 osaksi aineksen nimeä — määrä skaalautuu silti oikein.
 
+**Aika jaetaan kahtia.** `aika` on aktiivista työtä — aika, jonka seisot
+keittiössä. `odotusaika` on passiivista: uuni, kohoaminen, marinointi,
+jäähdytys. Luettelossa näkyy `20 min + 2 h`, reseptinäkymässä molemmat
+erikseen ja yhteisaika. Kumpi tahansa voi olla vapaata tekstia (`yön yli`);
+yhteisaika lasketaan vain, jos molemmat ovat tulkittavissa minuuteiksi.
+
+**Tagit** valitaan lomakkeella klikkaamalla jo käytössä olevia. `build.js`
+kirjoittaa luettelon `lisaa-resepti.html`:ään, ja lomake lukee sen lisäksi
+suoraan `recipes/`-kansiosta, kun kansio on valittu.
+
+**Ravintoarvot lasketaan automaattisesti** ainesriveistä `ravintotaulukko.js`:n
+avulla, annosta kohden. Mitään ei tarvitse täyttää käsin. Jos jokin aines
+puuttuu taulukosta, `node build.js` sanoo sen nimeltä ajon lopuksi — lisää rivi
+taulukkoon, niin se on mukana ensi kerralla.
+
+Laskennan voi ohittaa kirjoittamalla reseptiin omat arvot (annosta kohden):
+
+```markdown
+ravinto:
+  kcal: 520
+  proteiini: 18
+  hiilihydraatit: 62
+  sokeri: 14
+  rasva: 21
+  kuitu: 9
+```
+
+Luvut ovat arvioita: taulukossa on tyypillisiä arvoja, eivät tuotekohtaisia.
+Sivustolla lukee sen vuoksi "arvio".
+
 **Vain `otsikko` ja `ainekset` ovat pakollisia.** Kaikki muu on valinnaista.
+
+## Ennen julkaisua
+
+Uusi resepti oikoluetaan ennen kuin se menee ulos: kirjoitusasu, yhdyssanat,
+tuotenimien isot alkukirjaimet, vaiheiden johdonmukaisuus ja se, että
+ainesluettelo ja vaiheet puhuvat samoista aineksista. Lomakkeella kirjoitettu
+resepti menee suoraan kansioon ilman tarkistusta, joten tarkistus tehdään
+ennen `paivita.command`-ajoa.
 
 ## Miten julkaisu toimii
 
