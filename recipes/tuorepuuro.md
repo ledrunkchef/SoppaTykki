@@ -13,6 +13,7 @@ ainekset:
   - 1 rkl maapähkinävoita
   - 1 tl hunajaa
   - 1 tl kanelia
+  - 1 dl mustikoita
 ---
 
 1. Mittaa kaikki ainekset suljettavaan rasiaan.
