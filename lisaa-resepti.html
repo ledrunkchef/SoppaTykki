@@ -54,6 +54,7 @@
   @media (max-width:560px) { .rivi { grid-template-columns:1fr; } }
 
   label { display:block; }
+  .osio-rivi { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:8px; font-size:0.875rem; }
   .nimike {
     font-size:0.8125rem; text-transform:uppercase; letter-spacing:0.07em;
     font-weight:700; color:var(--ink-faint); margin-bottom:7px;
@@ -212,11 +213,17 @@
       <textarea id="kuvaus" class="pieni" placeholder="Yksi tai kaksi virkettä siitä, mikä tässä on olennaista."></textarea>
     </label>
 
-    <label>
-      <span class="nimike">Ainekset <span class="vihje">— yksi riviä kohden, määrä ensin</span></span>
-      <textarea id="ainekset" class="iso" required
-        placeholder="400 g spagettia&#10;150 g guancialea&#10;4 keltuaista&#10;50 g pecorinoa raastettuna&#10;1 tl mustapippuria"></textarea>
-    </label>
+    <div>
+      <label>
+        <span class="nimike">Ainekset <span class="vihje">— yksi riviä kohden, määrä ensin. Osion otsikko omalle rivilleen kaksoispisteen kanssa, esim. Marinadi:</span></span>
+        <textarea id="ainekset" class="iso" required
+          placeholder="600 g kanan paistileikettä&#10;Marinadi:&#10;150 g turkkilaista jogurttia&#10;1 tl suolaa&#10;Kastike:&#10;4 dl tomaattipassataa&#10;2 dl kermaa"></textarea>
+      </label>
+      <div class="osio-rivi">
+        <button type="button" id="lisaa-osio">+ Osion otsikko</button>
+        <span class="vihje">Jakaa ainekset osiin, esim. Marinadi ja Kastike.</span>
+      </div>
+    </div>
 
     <label>
       <span class="nimike">Valmistus <span class="vihje">— yksi vaihe riviä kohden</span></span>
@@ -259,7 +266,7 @@ const $ = id => document.getElementById(id);
 /* ---------- Tagiluettelo ----------
    build.js kirjoittaa tähän kaikki käytössä olevat tagit muodossa
    [["nopea",4],["kasvis",2]] — yleisin ensin. Älä muokkaa käsin. */
-let tagitLahtotiedot = /*__TAGIT__*/[["nopea",4],["illallinen",2],["aamiainen",1],["aasialainen",1],["grilli",1],["juusto",1],["kastike",1],["kasvis",1],["kesä",1],["salaatti",1],["sveitsiläinen",1],["talvi",1],["terveellinen",1]]/*__TAGIT_LOPPU__*/;
+let tagitLahtotiedot = /*__TAGIT__*/[["illallinen",2],["nopea",2],["aamiainen",1],["intialainen",1],["terveellinen",1]]/*__TAGIT_LOPPU__*/;
 
 let tunnetutTagit = tagitLahtotiedot.map(t => Array.isArray(t) ? t : [t, 0]);
 const valitutTagit = [];
@@ -490,6 +497,16 @@ function rivit(id) {
   return $(id).value.split('\n').map(s => s.trim()).filter(Boolean);
 }
 
+// Ainesrivit: "# Marinadi" tai "Marinadi:" on osion otsikko, joka
+// kirjoitetaan muodossa "Marinadi:" (build.js tunnistaa sen).
+function ainesrivit() {
+  return rivit('ainekset').map(a => {
+    const h = a.match(/^#+\s*(.+?)\s*:?$/);
+    if (h) return h[1] + ':';
+    return a.replace(/\s*:\s*$/, ':');
+  });
+}
+
 function kokoaMarkdown() {
   const otsikko = $('otsikko').value.trim();
   const annokset = $('annokset').value.trim() || '4';
@@ -505,7 +522,7 @@ function kokoaMarkdown() {
   if (valitutTagit.length) s += 'tagit: [' + valitutTagit.join(', ') + ']\n';
   if (kuvaus) s += 'kuvaus: ' + kuvaus + '\n';
   s += 'ainekset:\n';
-  for (const a of rivit('ainekset')) s += '  - ' + a + '\n';
+  for (const a of ainesrivit()) s += '  - ' + a + '\n';
   s += '---\n\n';
 
   rivit('vaiheet').forEach((v, i) => {
@@ -621,6 +638,22 @@ function tyhjennaLomake() {
 $('tyhjenna').addEventListener('click', () => {
   tyhjennaLomake();
   $('ilmo').hidden = true;
+});
+
+/* ---------- Osion otsikon lisäys ---------- */
+$('lisaa-osio').addEventListener('click', () => {
+  const ta = $('ainekset');
+  const nimi = 'Osion nimi';
+  const alku = ta.selectionStart ?? ta.value.length;
+  const ennen = ta.value.slice(0, alku);
+  const jalkeen = ta.value.slice(alku);
+  const eteen = ennen && !ennen.endsWith('\n') ? '\n' : '';
+  const taakse = '\n';
+  ta.value = ennen + eteen + nimi + ':' + taakse + jalkeen.replace(/^\n/, '');
+  const kohta = ennen.length + eteen.length;
+  ta.focus();
+  ta.setSelectionRange(kohta, kohta + nimi.length);
+  paivitaEsikatselu();
 });
 
 /* ---------- Elävä esikatselu ---------- */

@@ -61,6 +61,11 @@ Desimaalit pilkulla (`0,5 tl`), murtoluvut kauttaviivalla (`1/2 dl`),
 vaihteluvälit viivalla (`2-3 rkl`). Rivi ilman määrää (`ripaus suolaa`)
 näytetään sellaisenaan eikä sitä skaalata.
 
+**Osiot.** Ainekset voi jakaa osiin kirjoittamalla osion nimen omalle
+rivilleen kaksoispisteen kanssa (`- Marinadi:`). Sitä seuraavat rivit
+näytetään sivustolla otsikon alla. Lomakkeella sama onnistuu
+"+ Osion otsikko" -napilla tai kirjoittamalla `Marinadi:` suoraan.
+
 Tunnistetut yksiköt: g, kg, mg, ml, cl, dl, l, rkl, tl, kpl, prk, tlk, pss,
 nippu, pala, viipale, kynsi, oksa, annos, purkki, levy. Tuntematon sana menee
 osaksi aineksen nimeä — määrä skaalautuu silti oikein.

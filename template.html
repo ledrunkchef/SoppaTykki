@@ -334,6 +334,13 @@
 
   .ingredients { list-style: none; margin: 0; padding: 0; }
   .ingredients li { border-bottom: 1px solid var(--line-soft); }
+  .ingredients li.ing-osio {
+    border-bottom: none;
+    padding: 18px 0 6px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .ingredients li.ing-osio:first-child { padding-top: 4px; }
   .ing {
     display: flex;
     gap: 12px;
@@ -911,7 +918,15 @@
       vähennä.disabled = annokset <= 1;
       lista.innerHTML = '';
 
+      let edellinenOsio = null;
       r.ainekset.forEach((a, i) => {
+        if (a.osio && a.osio !== edellinenOsio) {
+          const oli = document.createElement('li');
+          oli.className = 'ing-osio';
+          oli.textContent = a.osio;
+          lista.appendChild(oli);
+        }
+        edellinenOsio = a.osio || null;
         const li = document.createElement('li');
         const b = document.createElement('button');
         b.className = 'ing';

@@ -383,8 +383,21 @@ function build() {
       continue;
     }
 
-    const ainekset = (meta.ainekset || [])
-      .map(parseIngredient).filter(Boolean);
+    // Väliotsikko ainesluettelossa: rivi, joka päättyy kaksoispisteeseen
+    // eikä ala määrällä ("- Marinadi:"). Seuraavat ainekset kuuluvat siihen.
+    const ainekset = [];
+    let osio = null;
+    for (const rivi of (meta.ainekset || [])) {
+      const t = String(rivi).trim();
+      if (/:$/.test(t) && !/^\d/.test(t)) {
+        osio = t.slice(0, -1).trim() || null;
+        continue;
+      }
+      const a = parseIngredient(t);
+      if (!a) continue;
+      if (osio) a.osio = osio;
+      ainekset.push(a);
+    }
 
     const annokset = parseInt(meta.annokset, 10) || 4;
 
