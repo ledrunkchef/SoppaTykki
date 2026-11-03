@@ -32,6 +32,7 @@ module.exports = [
   { nimi: 'spagetti', kcal: 360, prot: 12.5, hh: 70, sok: 3, rasva: 1.5, kuitu: 3, gDl: 45 },
   { nimi: 'pasta', kcal: 360, prot: 12.5, hh: 70, sok: 3, rasva: 1.5, kuitu: 3, gDl: 45 },
   { nimi: 'makaroni', kcal: 360, prot: 12.5, hh: 70, sok: 3, rasva: 1.5, kuitu: 3, gDl: 45 },
+  { nimi: 'udonnuudeli', muut: ['udon'], kcal: 130, prot: 3.5, hh: 26, sok: 0.5, rasva: 0.5, kuitu: 1.2 },  // tuore tai pakaste, valmiiksi keitetty
   { nimi: 'nuudeli', kcal: 350, prot: 11, hh: 70, sok: 2, rasva: 2, kuitu: 3, gDl: 45 },
   { nimi: 'riisi', kcal: 355, prot: 7, hh: 78, sok: 0.5, rasva: 1, kuitu: 1.5, gDl: 85 },
   { nimi: 'couscous', kcal: 355, prot: 12, hh: 72, sok: 1, rasva: 1.5, kuitu: 5, gDl: 75 },
@@ -181,6 +182,7 @@ module.exports = [
   { nimi: 'liemi', muut: ['lientä', 'liemeen', 'liemessä', 'naudanlie', 'kanalie', 'riistalie', 'kasvislie', 'kalalie'], kcal: 5, prot: 0.3, hh: 0.5, sok: 0.3, rasva: 0.1, kuitu: 0, gDl: 100 },
   { nimi: 'fondi', kcal: 60, prot: 5, hh: 6, sok: 2, rasva: 1.5, kuitu: 0, gDl: 110 },
   { nimi: 'soijakastike', kcal: 60, prot: 8, hh: 5, sok: 1.5, rasva: 0, kuitu: 0, gDl: 115 },
+  { nimi: 'gochujang', kcal: 210, prot: 5, hh: 45, sok: 20, rasva: 1.5, kuitu: 2, gDl: 120 },
   { nimi: 'kalakastike', kcal: 50, prot: 8, hh: 4, sok: 4, rasva: 0, kuitu: 0, gDl: 115 },
   { nimi: 'riisiviinietikka', kcal: 20, prot: 0, hh: 5, sok: 5, rasva: 0, kuitu: 0, gDl: 101 },
   { nimi: 'balsamico', muut: ['balsami'], kcal: 90, prot: 0.5, hh: 17, sok: 15, rasva: 0, kuitu: 0, gDl: 110 },
