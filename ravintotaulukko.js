@@ -127,11 +127,14 @@ module.exports = [
   { nimi: 'herne', kcal: 80, prot: 5.5, hh: 11, sok: 4, rasva: 0.4, kuitu: 5, gDl: 70 },
   { nimi: 'maissi', kcal: 90, prot: 3, hh: 16, sok: 5, rasva: 1.2, kuitu: 3, gDl: 75 },
   { nimi: 'avokado', kcal: 190, prot: 2, hh: 2, sok: 0.5, rasva: 18, kuitu: 6.5, gKpl: 150 },
+  { nimi: 'wakame', muut: ['wakamesalaat'], kcal: 70, prot: 1, hh: 10, sok: 7, rasva: 3, kuitu: 3, gDl: 50 },
+  { nimi: 'marinoitu inkivääri', muut: ['sushi-inkivääri'], kcal: 40, prot: 0.3, hh: 9, sok: 8, rasva: 0.1, kuitu: 1, gDl: 60 },
   { nimi: 'oliivi', kcal: 150, prot: 1, hh: 1, sok: 0.5, rasva: 15, kuitu: 3, gDl: 90 },
   { nimi: 'chili', kcal: 40, prot: 2, hh: 6, sok: 4, rasva: 0.4, kuitu: 1.5, gKpl: 10, mitaton: true },
   { nimi: 'inkivääri', kcal: 80, prot: 1.8, hh: 15, sok: 1.7, rasva: 0.8, kuitu: 2, gKpl: 30 },
 
   /* ---------- Palkokasvit, pähkinät, siemenet ---------- */
+  { nimi: 'edamame', kcal: 120, prot: 11, hh: 9, sok: 2, rasva: 5, kuitu: 5, gDl: 60 },
   { nimi: 'kikherne', kcal: 120, prot: 7, hh: 15, sok: 1, rasva: 2.5, kuitu: 6, gDl: 95 },
   { nimi: 'linssi', kcal: 340, prot: 25, hh: 48, sok: 2, rasva: 1.5, kuitu: 11, gDl: 85 },
   { nimi: 'papu', kcal: 130, prot: 8, hh: 18, sok: 0.5, rasva: 0.5, kuitu: 7, gDl: 95 },
@@ -150,6 +153,7 @@ module.exports = [
   { nimi: 'oliiviöljy', kcal: 900, prot: 0, hh: 0, sok: 0, rasva: 100, kuitu: 0, gDl: 91 },
   { nimi: 'rypsiöljy', kcal: 900, prot: 0, hh: 0, sok: 0, rasva: 100, kuitu: 0, gDl: 91 },
   { nimi: 'seesamiöljy', kcal: 900, prot: 0, hh: 0, sok: 0, rasva: 100, kuitu: 0, gDl: 91 },
+  { nimi: 'chiliöljy', muut: ['chili crisp'], kcal: 650, prot: 3, hh: 10, sok: 2, rasva: 65, kuitu: 4, gDl: 95 },  // Lao Gan Ma -tyyppinen, öljyssä rapeaa chiliä
   { nimi: 'kookosöljy', kcal: 900, prot: 0, hh: 0, sok: 0, rasva: 100, kuitu: 0, gDl: 91 },
   { nimi: 'öljy', kcal: 900, prot: 0, hh: 0, sok: 0, rasva: 100, kuitu: 0, gDl: 91 },
 
@@ -183,8 +187,12 @@ module.exports = [
   { nimi: 'fondi', kcal: 60, prot: 5, hh: 6, sok: 2, rasva: 1.5, kuitu: 0, gDl: 110 },
   { nimi: 'soijakastike', kcal: 60, prot: 8, hh: 5, sok: 1.5, rasva: 0, kuitu: 0, gDl: 115 },
   { nimi: 'gochujang', kcal: 210, prot: 5, hh: 45, sok: 20, rasva: 1.5, kuitu: 2, gDl: 120 },
+  { nimi: 'miso', kcal: 200, prot: 12, hh: 26, sok: 8, rasva: 6, kuitu: 5, gDl: 115 },
+  { nimi: 'mirin', kcal: 240, prot: 0.3, hh: 43, sok: 40, rasva: 0, kuitu: 0, gDl: 120 },
+  { nimi: 'teriyakikastike', kcal: 100, prot: 5, hh: 18, sok: 16, rasva: 0, kuitu: 0, gDl: 115 },
   { nimi: 'kalakastike', kcal: 50, prot: 8, hh: 4, sok: 4, rasva: 0, kuitu: 0, gDl: 115 },
   { nimi: 'riisiviinietikka', kcal: 20, prot: 0, hh: 5, sok: 5, rasva: 0, kuitu: 0, gDl: 101 },
+  { nimi: 'sushiriisiviinietikka', muut: ['sushietikka'], kcal: 120, prot: 0, hh: 30, sok: 28, rasva: 0, kuitu: 0, gDl: 110 },
   { nimi: 'balsamico', muut: ['balsami'], kcal: 90, prot: 0.5, hh: 17, sok: 15, rasva: 0, kuitu: 0, gDl: 110 },
   { nimi: 'etikka', kcal: 20, prot: 0, hh: 1, sok: 1, rasva: 0, kuitu: 0, gDl: 101 },
   { nimi: 'sinappi', kcal: 150, prot: 6, hh: 6, sok: 2, rasva: 10, kuitu: 3, gDl: 110 },
