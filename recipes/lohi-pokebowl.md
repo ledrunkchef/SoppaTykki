@@ -49,5 +49,4 @@ ainekset:
 
 - Lisukkeet ovat esimerkkejä. Vaihda, lisää tai jätä pois oman maun mukaan.
 - Kumpikin marinadi riittää noin 300 g:lle lohta. Jos teet molemmat, tuplaa lohen määrä.
-- Lohi syödään raakana, joten käytä sushilaatuista tai pakastettuna ollutta lohta.
 - Ravintoarvot on laskettu esimerkkilisukkeiden kanssa, ja ne ovat marinadien keskiarvo: misomarinadilla noin 1010 kcal ja teriyakimarinadilla noin 935 kcal annosta kohden.
