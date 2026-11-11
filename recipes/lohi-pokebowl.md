@@ -2,7 +2,7 @@
 otsikko: Lohi-pokebowl kahdella marinadilla
 annokset: 2
 aika: 30 min
-odotusaika: 1 h
+odotusaika: 1 h 30 min
 tagit: [illallinen, terveellinen]
 kuvaus: Raakaa lohta marinoituna joko kermaisessa misomarinadissa tai teriyakimarinadissa, sushiriisiä ja raikkaita lisukkeita. Teriyakilohen voi halutessaan liekittää nopeasti.
 ravinto:
@@ -38,11 +38,11 @@ ainekset:
   - 2 rkl marinoitua inkivääriä (sushi-inkivääriä)
 ---
 
-1. Keitä riisi pakkauksen ohjeen mukaan. Kääntele sushiriisiviinietikka kuuman riisin joukkoon kevyesti ja anna riisin jäähtyä huoneenlämpöiseksi.
-2. Leikkaa lohi noin 2 cm:n kuutioiksi.
+1. Leikkaa lohi noin 2 cm:n kuutioiksi.
+2. Teriyakilohen voi halutessaan liekittää ennen marinointia: levitä kuutiot uunipellille ja liekitä pinta nopeasti kaasupolttimella.
 3. Valitse marinadi ja sekoita sen ainekset tasaiseksi. Kääntele lohikuutiot marinadissa ja anna marinoitua jääkaapissa 30 min – 1 h.
-4. Teriyakilohen voi halutessaan liekittää: levitä kuutiot uunipellille ja liekitä pinta nopeasti kaasupolttimella, kunnes se karamellisoituu.
-5. Valmista lisukkeet: kypsennä edamamepavut pakkauksen ohjeen mukaan ja jäähdytä ne kylmällä vedellä. Viipaloi kurkku ja avokado.
+4. Kun lohi on marinoitunut, keitä riisi pakkauksen ohjeen mukaan. Kääntele sushiriisiviinietikka kuuman riisin joukkoon kevyesti ja anna riisin jäähtyä huoneenlämpöiseksi.
+5. Valmista lisukkeet riisin kypsyessä: kypsennä edamamepavut pakkauksen ohjeen mukaan ja jäähdytä ne kylmällä vedellä. Viipaloi kurkku ja avokado.
 6. Kokoa kulhot: riisi pohjalle, lohi ja lisukkeet omiksi kasoikseen sen päälle. Tarjoile heti.
 
 ## Muistiinpanot
