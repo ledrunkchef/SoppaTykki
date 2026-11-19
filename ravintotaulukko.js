@@ -140,7 +140,7 @@ module.exports = [
   { nimi: 'papu', kcal: 130, prot: 8, hh: 18, sok: 0.5, rasva: 0.5, kuitu: 7, gDl: 95 },
   { nimi: 'tofu', kcal: 120, prot: 13, hh: 2, sok: 0.5, rasva: 7, kuitu: 1 },
   { nimi: 'manteli', kcal: 600, prot: 21, hh: 6, sok: 4, rasva: 52, kuitu: 11, gDl: 60 },
-  { nimi: 'saksanpähkinä', kcal: 690, prot: 15, hh: 7, sok: 3, rasva: 65, kuitu: 6, gDl: 45 },
+  { nimi: 'saksanpähkinä', muut: ['saksanpähkinöi'], kcal: 690, prot: 15, hh: 7, sok: 3, rasva: 65, kuitu: 6, gDl: 45 },
   { nimi: 'cashew', kcal: 580, prot: 18, hh: 27, sok: 6, rasva: 44, kuitu: 3, gDl: 60 },
   { nimi: 'maapähkinä', kcal: 590, prot: 25, hh: 12, sok: 4, rasva: 49, kuitu: 8, gDl: 60 },
   { nimi: 'chiansiemen', muut: ['chia'], kcal: 480, prot: 17, hh: 8, sok: 0, rasva: 31, kuitu: 34, gDl: 80 },
