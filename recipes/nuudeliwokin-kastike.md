@@ -5,14 +5,14 @@ aika: 5 min
 tagit: [nopea]
 kuvaus: Riittää 800 g:lle kanaa ja 300 g:lle kuivia munanuudeleita, eli 4–6 annokseen. Säädä suhdetta määrän mukaan.
 ainekset:
-  - 45 ml soijakastiketta
-  - 45 ml osterikastiketta
-  - 15 ml hoisinkastiketta
-  - 15 ml riisiviinietikkaa
-  - 10 ml paahdettua seesamiöljyä
-  - 15 g fariinisokeria tai hunajaa
-  - 10 g maissitärkkelystä
-  - 50 ml vettä tai kanalientä
+  - 3 rkl soijakastiketta
+  - 3 rkl osterikastiketta
+  - 1 rkl hoisinkastiketta
+  - 1 rkl riisiviinietikkaa
+  - 2 tl paahdettua seesamiöljyä
+  - 1 rkl fariinisokeria tai hunajaa
+  - 1 rkl maissitärkkelystä
+  - 3 rkl vettä tai kanalientä
   - 1 rkl srirachaa (valinnainen)
 ---
 
